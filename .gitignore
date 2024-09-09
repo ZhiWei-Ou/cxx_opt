@@ -1,0 +1,8 @@
+# nvim
+.cache
+compile_commands.json
+out
+
+# for VSCode
+build
+.vscode
