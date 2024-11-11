@@ -10,10 +10,14 @@
 #define OPT_LONG_PREFIX "--"
 #define OPT_OPERATION "="
 
+#define OPT_VERSION "V1.0.0"
+
 class Opt {
 public:
     Opt() {}
     ~Opt() {}
+
+    static const char *Version() { return OPT_VERSION; }
 
     typedef void (*optionHandle)(void *);
     enum Type { Type_String = 0x1, Type_Bool = 0x2, Type_Int = 0x4, Type_Function = 0x8, Type_Unkown = (0x0 | ( 0x1 << sizeof(void *) * 8) ) };
