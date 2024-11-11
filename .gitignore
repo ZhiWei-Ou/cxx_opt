@@ -1,8 +1,19 @@
 # nvim
-.cache
-compile_commands.json
-out
+/.cache/
+/out/
 
 # for VSCode
-build
-.vscode
+/build/
+/.vscode/
+
+# MacOS
+.DS_Store
+
+# CMake
+/Testing/
+/Debug/
+compile_commands.json
+*_test.cpp
+
+# Application
+/bin/
