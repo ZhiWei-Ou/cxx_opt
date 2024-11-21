@@ -6,21 +6,18 @@
 #include <strings.h>
 #include <vector>
 
-#define OPT_SHORT_PREFIX "-"
-#define OPT_LONG_PREFIX "--"
-#define OPT_OPERATION "="
-
-#define OPT_VERSION "V1.0.0"
+static constexpr const char *kOptVersion = "1.0.0";
+static constexpr const char *kOptOperation = "=";
 
 class Opt {
 public:
     Opt() {}
     ~Opt() {}
 
-    static const char *Version() { return OPT_VERSION; }
+    static const char *ReVersion() { return kOptVersion; }
 
     typedef void (*optionHandle)(void *);
-    enum Type { Type_String = 0x1, Type_Bool = 0x2, Type_Int = 0x4, Type_Function = 0x8, Type_Unkown = (0x0 | ( 0x1 << sizeof(void *) * 8) ) };
+    enum Type { Type_String = 0x1, Type_Bool = 0x2, Type_Int = 0x4, Type_Function = 0x8, Type_Unkown = 0xff };
     struct option {
         std::string short_;
         std::string long_;
@@ -204,12 +201,12 @@ inline void Opt::Parse(int argc, char *argv[])
             if (arg[1] == '-') {
                 // It is long option
                 char *_opt = &arg[2];
-                char *para = strtok(_opt, OPT_OPERATION);
+                char *para = strtok(_opt, kOptOperation);
 
                 for (auto &opt : options_) {
                     if (opt.long_ == para) {
                         if (para != nullptr) {
-                            para = strtok(nullptr, OPT_OPERATION);
+                            para = strtok(nullptr, kOptOperation);
                             todo(opt, para);
                         }
                         break;
@@ -223,9 +220,9 @@ inline void Opt::Parse(int argc, char *argv[])
             char *_opt = &arg[1];            
             for (auto &opt : options_) {
                 if (opt.short_[0] == _opt[0]) {
-                    char *para = strtok(_opt, OPT_OPERATION);
+                    char *para = strtok(_opt, kOptOperation);
                     if (para != nullptr) {
-                        para = strtok(nullptr, OPT_OPERATION);
+                        para = strtok(nullptr, kOptOperation);
                         todo(opt, para);
                     }
                     break;
