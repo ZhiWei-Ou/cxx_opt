@@ -13,7 +13,6 @@
 /Testing/
 /Debug/
 compile_commands.json
-*_test.cpp
 
 # Application
 /bin/
