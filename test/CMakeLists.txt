@@ -9,11 +9,11 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(googletest)
 
-include(CTest)
-enable_testing()
-
 add_executable(${PROJECT_NAME} flag_test.cpp ../cxx_opt.cpp)
 target_link_libraries(${PROJECT_NAME} gtest_main)
+
 include(GoogleTest)
-gtest_discover_tests(${PROJECT_NAME})
+gtest_discover_tests(${PROJECT_NAME}
+    DISCOVERY_MODE PRE_TEST
+)
 
