@@ -180,14 +180,11 @@ void CXX_OPT_NAMESPACE::Flag::printDefaults() const noexcept {
 void CXX_OPT_NAMESPACE::Flag::registerString(const std::string &name, std::string *value, const std::string &help) {
     REGISTER_PARAM_CHECK_ASSERT(name, value);
 
-    FlagInfo info = {
-        .type_ = FlagType::String,
-        .name_ = name,
-        .help_ = help,
-        .default_ = {
-            .string_ = value->c_str()
-        }
-    };
+    FlagInfo info;
+    info.type_ = FlagType::String;
+    info.name_ = name;
+    info.help_ = help;
+    info.default_.string_ = value->c_str();
 
     flags_[info] = value;
 }
@@ -195,14 +192,11 @@ void CXX_OPT_NAMESPACE::Flag::registerString(const std::string &name, std::strin
 void CXX_OPT_NAMESPACE::Flag::registerInt(const std::string &name, int *value, const std::string &help) {
     REGISTER_PARAM_CHECK_ASSERT(name, value);
 
-    FlagInfo info = {
-        .type_ = FlagType::Int,
-        .name_ = name,
-        .help_ = help,
-        .default_ = {
-            .int_ = *value
-        }
-    };
+    FlagInfo info;
+    info.type_ = FlagType::Int;
+    info.name_ = name;
+    info.help_ = help;
+    info.default_.int_ = *value;
 
     flags_[info] = value;
 }
@@ -210,14 +204,11 @@ void CXX_OPT_NAMESPACE::Flag::registerInt(const std::string &name, int *value, c
 void CXX_OPT_NAMESPACE::Flag::registerBool(const std::string &name, bool *value, const std::string &help) {
     REGISTER_PARAM_CHECK_ASSERT(name, value);
 
-    FlagInfo info = {
-        .type_ = FlagType::Bool,
-        .name_ = name,
-        .help_ = help,
-        .default_ = {
-            .bool_ = *value
-        }
-    };
+    FlagInfo info;
+    info.type_ = FlagType::Bool;
+    info.name_ = name;
+    info.help_ = help;
+    info.default_.bool_ = *value;
 
     flags_[info] = value;
 }
@@ -225,14 +216,11 @@ void CXX_OPT_NAMESPACE::Flag::registerBool(const std::string &name, bool *value,
 void CXX_OPT_NAMESPACE::Flag::registerFloat(const std::string &name, float *value, const std::string &help) {
     REGISTER_PARAM_CHECK_ASSERT(name, value);
 
-    FlagInfo info = {
-        .type_ = FlagType::Float,
-        .name_ = name,
-        .help_ = help,
-        .default_ = {
-            .float_ = *value
-        }
-    };
+    FlagInfo info;
+    info.type_ = FlagType::Float;
+    info.name_ = name;
+    info.help_ = help;
+    info.default_.float_ = *value;
 
     flags_[info] = value;
 }
