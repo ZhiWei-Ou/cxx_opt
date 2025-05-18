@@ -74,6 +74,7 @@ namespace CXX_OPT_NAMESPACE {
      */
     class Flag {
     public:
+
         Flag();
         ~Flag();
 
@@ -87,21 +88,25 @@ namespace CXX_OPT_NAMESPACE {
         void registerInt(const std::string &name, int *value, const std::string &help = "");
         void registerBool(const std::string &name, bool *value, const std::string &help = "");
         void registerFloat(const std::string &name, float *value, const std::string &help = "");
+        void registerHandler(const std::string &name, std::function<void (void *)> handler, void *context, const std::string &help = "");
 
         std::vector<std::string> args();
         std::string arg(size_t index);
 
     protected:
+        void showHelp() const noexcept;
 
-        enum class FlagType { String, Int, Bool, Float };
+        enum class FlagType { String, Int, Bool, Float, Handler };
         const char *flagTypeToString(FlagType type) const noexcept {
-            static const char *types[] = { "string", "int", "bool", "float" };
+            static const char *types[] = { "string", "int", "bool", "float", "" };
             return types[(int)type];
         }
         struct FlagInfo {
             FlagType type_;
             std::string name_;
             std::string help_;
+            std::function<void (void *)> handler_;
+            void *context;
 
             union {
                 const char *string_;
@@ -116,6 +121,7 @@ namespace CXX_OPT_NAMESPACE {
         };
 
     private:
+        std::string cmd_;
         std::string banner_;
         std::map<FlagInfo/*flag*/, void */*save_pointer*/> flags_;
         std::vector<std::string> args_;

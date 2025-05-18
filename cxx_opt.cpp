@@ -62,7 +62,8 @@ static std::string toLower(const std::string &str) {
 }
 
 CXX_OPT_NAMESPACE::Flag::Flag()
-    : banner_("") {
+    : cmd_(""), banner_("") {
+    registerHandler("help", [this](void *) { showHelp(); }, nullptr, "show help");
 }
 
 CXX_OPT_NAMESPACE::Flag::~Flag() {
@@ -107,7 +108,9 @@ void CXX_OPT_NAMESPACE::Flag::parse(int argc, char **argv) {
         } else if (arg.find('=') != std::string::npos) {
             argument = arg.substr(arg.find('=') + 1);
         } else {
-            if (match->first.type_ == FlagType::Bool) {
+            if (match->first.type_ == FlagType::Handler) {
+                
+            }else if (match->first.type_ == FlagType::Bool) {
                 argument = "true";
             } else if ((i + 1) >= arg_count) {
                 throw CXX_OPT_NAMESPACE::FlagInvalidArgumentError(arg + " argument not found");
@@ -140,6 +143,9 @@ void CXX_OPT_NAMESPACE::Flag::parse(int argc, char **argv) {
                 case FlagType::Float: {
                     *static_cast<float*>(match->second) = std::stof(argument);
                 } break;
+                case FlagType::Handler: {
+                    match->first.handler_(match->first.context);
+                }
             }
 
         } catch (const FlagException &e) {
@@ -172,6 +178,9 @@ void CXX_OPT_NAMESPACE::Flag::printDefaults() const noexcept {
         } break;
         case FlagType::Float: {
             std::fprintf(stderr, "    %s (default: %0.2f)\n", info.help_.c_str(), info.default_.float_);
+        } break;
+        case FlagType::Handler: {
+            std::fprintf(stderr, "    %s\n", info.help_.c_str());
         } break;
         }
     }
@@ -225,10 +234,35 @@ void CXX_OPT_NAMESPACE::Flag::registerFloat(const std::string &name, float *valu
     flags_[info] = value;
 }
 
+void CXX_OPT_NAMESPACE::Flag::registerHandler(const std::string &name,
+                                              std::function<void (void *)> handler,
+                                              void *context,
+                                              const std::string &help) {
+    REGISTER_PARAM_CHECK_ASSERT(name, handler);
+
+    FlagInfo info;
+    info.type_ = FlagType::Handler;
+    info.name_ = name;
+    info.help_ = help;
+    info.handler_ = handler;
+    info.context = context;
+
+    flags_[info] = nullptr;
+}
+
 std::vector<std::string> CXX_OPT_NAMESPACE::Flag::args() {
     return std::vector<std::string>();
 }
 
 std::string CXX_OPT_NAMESPACE::Flag::arg(size_t index) {
     return args_.at(index);
+}
+
+void CXX_OPT_NAMESPACE::Flag::showHelp() const noexcept {
+    if (banner_.empty()) 
+        std::fprintf(stderr, "Usage: %s\n", cmd_.c_str());
+    else
+        std::fprintf(stderr, "%s\n", banner_.c_str());
+
+    printDefaults();
 }

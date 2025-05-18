@@ -412,3 +412,43 @@ TEST(Flag, parse_type_float) {
     EXPECT_EQ(pi, 3.141592f);
 
 }
+
+
+TEST(Flag, parse_type_handler) {
+
+    const char *cmd [] = {
+        "./cmd",
+        "-version"
+    };
+
+    bool version_show = false;
+    CXX_OPT_NAMESPACE::Flag flag;
+    flag.registerHandler("version", [&] (void *) {
+                version_show = true;
+            }, nullptr, "show version");
+
+    flag.parse(sizeof cmd / sizeof cmd[0], (char **)&cmd);
+
+    EXPECT_EQ(version_show, true);
+
+    cmd[1] = "-help";
+
+    flag.parse(sizeof cmd / sizeof cmd[0], (char **)&cmd);
+}
+
+TEST(Flag, parse_type_handler_with_context) {
+    const char *cmd [] = {
+        "./cmd",
+        "-version"
+    };
+
+    bool version_show = false;
+    CXX_OPT_NAMESPACE::Flag flag;
+    flag.registerHandler("version", [&] (void *ctx) {
+                *static_cast<bool *>(ctx) = true;
+            }, &version_show, "show version");
+
+    flag.parse(sizeof cmd / sizeof cmd[0], (char **)&cmd);
+
+    EXPECT_EQ(version_show, true);
+}
