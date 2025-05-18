@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 
 set(VERSION "0.0.1")
 set(PROJECT_NAME "cxx_opt")
+set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
 project(${PROJECT_NAME} VERSION ${VERSION} LANGUAGES CXX)
 
