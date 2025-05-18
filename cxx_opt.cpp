@@ -29,8 +29,7 @@
  * =============================================================================
  */
 
-#include <cstdio>
-#include <cstring>
+#include <algorithm>
 #include "cxx_opt.h"
 
 #define FLAG_NOT_CONTAINS_EQUAL_ASSERT(flag, error) \
