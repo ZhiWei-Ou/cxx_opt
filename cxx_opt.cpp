@@ -1,13 +1,49 @@
+/*
+ * =============================================================================
+ *  File Name    : cxx_opt.cpp
+ *  Description  : Lightweight flag parsing utility for C++ (command-line flags)
+ *  Author       : Ouzw
+ *  Email        : ouzw.mail@gmail.com
+ *  Created Date : Mon Sep 9 22:40:45 2024 +0800
+ *  Version      : 1.0
+ *
+ *  Copyright (c) 2025 Ouzw
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ * =============================================================================
+ */
+
 #include <cstdio>
 #include <cstring>
 #include "cxx_opt.h"
 
-#define PARAM_STRING_NOT_EMPTY_ASSERT(param, error) \
+#define FLAG_NOT_CONTAINS_EQUAL_ASSERT(flag, error) \
+    do { \
+    if (flag.find('=') != std::string::npos) { \
+        throw CXX_OPT_NAMESPACE::FlagContainsEqualError(error); \
+    } } while (0)
+#define FLAG_NOT_EMPTY_ASSERT(param, error) \
     do { \
     if (param.empty()) { \
         throw CXX_OPT_NAMESPACE::FlagInvalidArgumentError(error); \
     } } while (0)
-#define PARAM_NOT_NIL_ASSERT(param, error) \
+#define SAVE_PTR_NOT_NIL_ASSERT(param, error) \
     do { \
     if (param == nullptr) { \
         throw CXX_OPT_NAMESPACE::FlagInvalidArgumentError(error); \
@@ -15,8 +51,9 @@
 
 #define REGISTER_PARAM_CHECK_ASSERT(name, value) \
     do { \
-    PARAM_STRING_NOT_EMPTY_ASSERT(name, "for register parameter name empty"); \
-    PARAM_NOT_NIL_ASSERT(value, "for register parameter value point == nil"); \
+    FLAG_NOT_EMPTY_ASSERT(name, "for register parameter name empty"); \
+    SAVE_PTR_NOT_NIL_ASSERT(value, "for register parameter value point == nil"); \
+    FLAG_NOT_CONTAINS_EQUAL_ASSERT(name, "for" + name); \
     } while (0)
 
 static std::string toLower(const std::string &str) {

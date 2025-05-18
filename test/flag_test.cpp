@@ -1,13 +1,95 @@
+/*
+ * =============================================================================
+ *  File Name    : flag_test.cpp
+ *  Description  : Lightweight flag parsing utility for C++ (command-line flags)
+ *  Author       : Ouzw
+ *  Email        : ouzw.mail@gmail.com
+ *  Created Date : Mon Sep 9 22:47:11 2024 +0800
+ *  Version      : 1.0
+ *
+ *  Copyright (c) 2025 Ouzw
+ *
+ *  Permission is hereby granted, free of charge, to any person obtaining a copy
+ *  of this software and associated documentation files (the "Software"), to deal
+ *  in the Software without restriction, including without limitation the rights
+ *  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *  copies of the Software, and to permit persons to whom the Software is
+ *  furnished to do so, subject to the following conditions:
+ *
+ *  The above copyright notice and this permission notice shall be included in all
+ *  copies or substantial portions of the Software.
+ *
+ *  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ *  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ *  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ *  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ *  SOFTWARE.
+ * =============================================================================
+ */
+
 #include <gtest/gtest.h>
 #include "../cxx_opt.h"
 
 TEST(Flag, exception) {
+    bool occur = false;
 
-    GTEST_LOG_(INFO) << "TODO: nil pointer exception";
+    CXX_OPT_NAMESPACE::Flag flag;
+    try {
+        flag.registerInt("age", nullptr);
+    } catch (...) {
+        occur = true;
+    }
+    EXPECT_TRUE(occur) << "TEST: nil pointer exception.";
 
-    GTEST_LOG_(INFO) << "TODO: invalid boolean value exception";
+    try {
+        occur = false;
+        std::string str;
+        flag.registerString("", &str);
+    } catch (...) {
+        occur = true;
+    }
+    EXPECT_TRUE(occur) << "TEST: empty flag exception.";
 
-    GTEST_LOG_(INFO) << "TODO: flag contains '=' exception";
+    try {
+        occur = false;
+        int age = 0;
+        flag.registerInt("age=", &age);
+    } catch (...) {
+        occur = true;
+    }
+    EXPECT_TRUE(occur) << "TEST: flag contains '='";
+
+    try {
+        const char *cmd[] = {
+            "./mock",
+            "-age=stub",
+        };
+
+        occur = false;
+        int age = 0;
+        flag.registerInt("age", &age);
+        flag.parse(sizeof cmd / sizeof cmd[0], (char **)&cmd);
+    } catch (...) {
+        occur = true;
+    }
+    EXPECT_TRUE(occur) << "TEST: './mock -age=stub' for invalid integer value.";
+
+    try {
+        const char *cmd[] = {
+            "./mock",
+            "-adult=2",
+        };
+
+        occur = false;
+        bool adult = false;
+        flag.registerBool("adult", &adult);
+        flag.parse(sizeof cmd / sizeof cmd[0], (char **)&cmd);
+    } catch (...) {
+        occur = true;
+    }
+    EXPECT_TRUE(occur) << "TEST: './mock -adult=2' for invalid boolean value.";
 }
 
 TEST(Flag, printDefaults) {
